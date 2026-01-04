@@ -31,9 +31,8 @@ const ogOptions: SatoriOptions = {
 };
 
 // 读取并转换 logo 图片
-const logoPath = path.resolve("public/logo.jpg");
-const logoBuffer = fs.readFileSync(logoPath);
-const logoBase64 = `data:image/jpeg;base64,${logoBuffer.toString("base64")}`;
+const logoPath = path.resolve("public/pixelated_image.svg");
+const logoSvg = fs.readFileSync(logoPath, "utf-8");
 
 const markup = (title: string, pubDate: string) =>
 	html`<div tw="flex flex-col w-full h-full bg-[#1d1f21] text-[#c9cacc]">
@@ -43,7 +42,9 @@ const markup = (title: string, pubDate: string) =>
 		</div>
 		<div tw="flex items-center justify-between w-full p-10 border-t border-[#2bbc89] text-xl">
 			<div tw="flex items-center">
-				<img src="${logoBase64}" width="60" height="60" tw="rounded-full" />
+				<div tw="w-[60px] h-[60px] flex items-center justify-center rounded-full overflow-hidden">
+          ${html(logoSvg)}
+        </div>
 				<p tw="ml-3 font-semibold">${siteConfig.title}</p>
 			</div>
 			<p>by ${siteConfig.author}</p>
