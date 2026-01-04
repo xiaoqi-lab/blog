@@ -1,7 +1,5 @@
 import { Resvg } from "@resvg/resvg-js";
 import type { APIContext, InferGetStaticPropsType } from "astro";
-import fs from "node:fs";
-import path from "node:path";
 import satori, { type SatoriOptions } from "satori";
 import { html } from "satori-html";
 import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
@@ -30,10 +28,6 @@ const ogOptions: SatoriOptions = {
 	width: 1200,
 };
 
-// 读取并转换 logo 图片
-const logoPath = path.resolve("public/pixelated_image.svg");
-const logoSvg = fs.readFileSync(logoPath, "utf-8");
-
 const markup = (title: string, pubDate: string) =>
 	html`<div tw="flex flex-col w-full h-full bg-[#1d1f21] text-[#c9cacc]">
 		<div tw="flex flex-col flex-1 w-full p-10 justify-center">
@@ -42,8 +36,8 @@ const markup = (title: string, pubDate: string) =>
 		</div>
 		<div tw="flex items-center justify-between w-full p-10 border-t border-[#2bbc89] text-xl">
 			<div tw="flex items-center">
-				<div tw="w-[60px] h-[60px] flex items-center justify-center rounded-full overflow-hidden">
-          ${html(logoSvg)}
+				<div tw="w-[60px] h-[60px] flex items-center justify-center rounded-full overflow-hidden bg-white text-4xl">
+					🥳
         </div>
 				<p tw="ml-3 font-semibold">${siteConfig.title}</p>
 			</div>
