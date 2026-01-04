@@ -1,77 +1,86 @@
 ---
-import "../styles/global.css";
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { WEBMENTION_PINGBACK, WEBMENTION_URL } from "astro:env/client";
+import { siteConfig } from "@/site.config";
+import type { SiteMeta } from "@/types";
+import "@/styles/global.css";
 
-interface Props {
-  title?: string;
-  description?: string;
-}
+type Props = SiteMeta;
 
-const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+const { articleDate, description, ogImage, title } = Astro.props;
+
+const titleSeparator = "•";
+const siteTitle = `${title} ${titleSeparator} ${siteConfig.title}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url).href;
 ---
 
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>{siteTitle}</title>
 
-<!-- Basic Meta Tags -->
-<title>{title}</title>
-<meta name="description" content={description} />
-<meta name="generator" content={Astro.generator} />
+{/* Icons */}
+<link href="/icon.svg" rel="icon" type="image/svg+xml" />
+{
+	import.meta.env.PROD && (
+		<>
+			{/* Favicon & Apple Icon */}
+			<link rel="icon" href="/favicon-32x32.png" type="image/png" />
+			<link href="/icons/apple-touch-icon.png" rel="apple-touch-icon" />
+			{/* Manifest */}
+			<link href="/manifest.webmanifest" rel="manifest" />
+		</>
+	)
+}
 
-<!-- Favicons -->
-<link rel="icon" href="/favicons/favicon.ico" sizes="any" />
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
-<link rel="manifest" href="/favicons/site.webmanifest" />
+{/* Canonical URL */}
+<link href={canonicalURL} rel="canonical" />
 
-<!-- Favicon for IE -->
-<link rel="shortcut icon" href="/favicons/favicon.ico" type="image/x-icon" />
+{/* Primary Meta Tags */}
+<meta content={siteTitle} name="title" />
+<meta content={description} name="description" />
+<meta content={siteConfig.author} name="author" />
 
-<!-- Favicons for different sizes -->
-<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+{/* Open Graph / Facebook */}
+<meta content={articleDate ? "article" : "website"} property="og:type" />
+<meta content={title} property="og:title" />
+<meta content={description} property="og:description" />
+<meta content={canonicalURL} property="og:url" />
+<meta content={siteConfig.title} property="og:site_name" />
+<meta content={siteConfig.ogLocale} property="og:locale" />
+<meta content={socialImageURL} property="og:image" />
+<meta content="1200" property="og:image:width" />
+<meta content="630" property="og:image:height" />
+{
+	articleDate && (
+		<>
+			<meta content={siteConfig.author} property="article:author" />
+			<meta content={articleDate} property="article:published_time" />
+		</>
+	)
+}
 
-<!-- RSS Feed -->
-<link
-  rel="alternate"
-  type="application/rss+xml"
-  title={SITE_TITLE}
-  href={new URL('rss.xml', Astro.site)}
-/>
+{/* Twitter */}
+<meta content="summary_large_image" property="twitter:card" />
+<meta content={canonicalURL} property="twitter:url" />
+<meta content={title} property="twitter:title" />
+<meta content={description} property="twitter:description" />
+<meta content={socialImageURL} property="twitter:image" />
 
-<!-- Sitemap -->
-<link rel="sitemap" href="/sitemap-index.xml" />
+{/* Sitemap */}
+<link href="/sitemap-index.xml" rel="sitemap" />
 
-<!-- Canonical URL -->
-<link rel="canonical" href={canonicalURL} />
+{/* RSS auto-discovery */}
+<link href="/rss.xml" title="Blog" rel="alternate" type="application/rss+xml" />
+<link href="/notes/rss.xml" title="Notes" rel="alternate" type="application/rss+xml" />
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
+{/* Webmentions */}
+{
+	WEBMENTION_URL && (
+		<>
+			<link href={WEBMENTION_URL} rel="webmention" />
+			{WEBMENTION_PINGBACK && <link href={WEBMENTION_PINGBACK} rel="pingback" />}
+		</>
+	)
+}
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-
-<!-- Additional SEO -->
-<meta name="robots" content="index, follow" />
-<meta name="googlebot" content="index, follow" />
-
-<!-- Theme Color for Mobile Browsers -->
-<meta name="theme-color" content="#f4f5ef" />
-
-<!-- For IE -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-<!-- AOS Animation Library -->
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-
-<!-- Google Fonts - Geist -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+<meta content={Astro.generator} name="generator" />

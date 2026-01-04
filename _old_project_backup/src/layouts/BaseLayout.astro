@@ -1,0 +1,35 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import { getTranslation } from "../i18n/index";
+
+// Get language from locals (set by middleware) or from URL path
+let lang = Astro.locals.lang;
+if (!lang) {
+  // Fallback: check URL path
+  if (Astro.url.pathname.startsWith('/zh')) {
+    lang = 'zh';
+  } else {
+    lang = 'en';
+  }
+}
+const t = getTranslation(lang);
+---
+
+<html lang={lang} class="selection:bg-secondary selection:text-secondary">
+  <head>
+    <BaseHead />
+  </head>
+
+  <body class="bg-primary">
+    <slot />
+    <Footer lang={lang} />
+    <script type="text/javascript" src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+    ></script>
+    <script type="text/javascript">
+      AOS.init({
+        once: true, // animation will happen only once
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+---
+// This component handles client-side language detection and redirection for root path
+---
+
+<script>
+  // Only run on client side and for root path
+  if (typeof window !== 'undefined' && window.location.pathname === '/') {
+    const storedLang = localStorage.getItem('preferred-language');
+    const browserLang = navigator.language.split('-')[0];
+    
+    // Determine preferred language
+    let preferredLang = 'en';
+    if (storedLang === 'zh' || storedLang === 'en') {
+      preferredLang = storedLang;
+    } else if (browserLang === 'zh') {
+      preferredLang = 'zh';
+    }
+    
+    // Redirect to language-specific path if not English
+    if (preferredLang === 'zh') {
+      window.location.href = '/zh';
+    }
+  }
+</script>
+
